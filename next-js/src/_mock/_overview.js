@@ -56,6 +56,67 @@ export const _appInvoices = Array.from({ length: 5 }, (_, index) => {
   };
 });
 
+export const _EmployeeUser = Array.from({ length: 5 }, (_, index) => {
+  const EmployeeUserId = ['14473', '14475', '14476', '14477', '14478'][index];
+  const EmployeeUserName = ['Android', 'Mac', 'Windows', 'Android', 'Mac'][index];
+  const account = ['Android', 'Mac', 'Windows', 'Android', 'Mac'][index];
+  const password = ['Android', 'Mac', 'Windows', 'Android', 'Mac'][index];
+  const phoneNumber = ['123-456-7890', '234-567-8901', '345-678-9012', '456-789-0123', '567-890-1234'][index];
+  const email = ['abc@gmail.com', '123@gmail.com', '123dasf@gmail.com', '12asf3@gmail.com', '1235@gmail.com' ][index];
+  const room = ['001', '002', '003', '004', '005'][index];
+  const status = ['Đang công tác', 'Dừng công tác', 'Đình chỉ công tác', 'Nghỉ phép', 'Đang công tác'][index];
+  const unit = ['1', '2', '3', '4', '5'][index];
+  const faculty = ['Khoa tim mạch', 'Khoa thần kinh', 'Khoa chấn thương chỉnh hình', 'Khoa lâm sàng', 'Khoa ngọại'][index];
+  const position = ['Nhân viên', 'Nhân viên', 'Chủ tịch', 'Trưởng khoa', 'Nhân viên'][index];
+  const workPosition = ['Bác sĩ phẫu thuật', 'Y tá', 'Viện trưởng', 'Bác sĩ phẫu thuật', 'Lễ tân'][index];
+  return {
+    id: _mock.id(index),
+    EmployeeUserId: `2025` + EmployeeUserId,
+    EmployeeUserName,
+    account,
+    password,
+    phoneNumber,
+    email,
+    room,
+    status,
+    unit,
+    faculty,
+    position,
+    workPosition,
+  };
+});
+
+export const _PatientUser = Array.from({ length: 5 }, (_, index) => {
+  const PatientUserId = ['14473', '14475', '14476', '14477', '14478'][index];
+  const PatientUserName = ['Android', 'Mac', 'Windows', 'Android', 'Mac'][index];
+  const account = ['Android', 'Mac', 'Windows', 'Android', 'Mac'][index];
+  const password = ['Android', 'Mac', 'Windows', 'Android', 'Mac'][index];
+  const phoneNumber = ['123-456-7890', '234-567-8901', '345-678-9012', '456-789-0123', '567-890-1234'][index];
+  const email = ['abc@gmail.com', '123@gmail.com', '123dasf@gmail.com', '12asf3@gmail.com', '1235@gmail.com' ][index];
+  const date = ['01/01/2000', '02/02/2001', '03/03/2002', '04/04/2003', '05/05/2004'][index];
+  const sex = ['Nam', 'Nữ', 'Khác', 'Nam', 'Nữ'][index];
+  const nationality = ['Việt Nam', 'Mỹ', 'Anh', 'Pháp', 'Nhật Bản'][index];
+  const nation = ['Kinh', 'Tày', 'Thái', 'Mường', 'Khmer'][index];
+  const address = ['Hà Nội', 'TP Hồ Chí Minh', 'Đà Nẵng', 'Cần Thơ', 'Hải Phòng '][index];
+  const work = ['Kỹ sư', 'Giáo viên', 'Bác sĩ', 'Lập trình viên', 'Nhân viên văn phòng'][index];
+
+  return {
+    id: _mock.id(index),
+    PatientUserId: `2025` + PatientUserId,
+    PatientUserName,
+    account,
+    password,
+    phoneNumber,
+    email,
+    date,
+    sex,
+    nationality,
+    nation,
+    address,
+    work,
+  };
+});
+
 export const _appFeatured = Array.from({ length: 3 }, (_, index) => ({
   id: _mock.id(index + 3),
   title: _mock.postTitle(index + 3),

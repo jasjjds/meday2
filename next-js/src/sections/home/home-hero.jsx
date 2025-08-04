@@ -73,9 +73,9 @@ export function HomeHero({ sx, ...other }) {
         ]}
       >
         <Box component="span" sx={{ width: 1, opacity: 0.24 }}>
-          Boost your building
+          Làn da khỏe mạnh
         </Box>
-        process with
+        cùng với
         <Box
           component={m.span}
           animate={{ backgroundPosition: '200% center' }}
@@ -95,7 +95,7 @@ export function HomeHero({ sx, ...other }) {
             }),
           ]}
         >
-          Minimal
+          MEDAY
         </Box>
       </Box>
     </m.div>
@@ -113,7 +113,7 @@ export function HomeHero({ sx, ...other }) {
           }),
         ]}
       >
-        {`The starting point for your next project is based on MUI. \nEasy customization helps you build apps faster and better.`}
+        {`Công cụ giúo quản lý và chuẩn đoán bệnh mề đay. \n Dễ dàng sử dụng với giao diện thân thiện, \n giúp người dùng theo dõi và quản lý tình trạng bệnh của mình.`}
       </Typography>
     </m.div>
   );
@@ -164,7 +164,7 @@ export function HomeHero({ sx, ...other }) {
             startIcon={<Iconify width={24} icon="custom:flash-outline" />}
           >
             <span>
-              Live preview
+              Xem ngay
               <Box
                 component="small"
                 sx={[
@@ -192,7 +192,7 @@ export function HomeHero({ sx, ...other }) {
             sx={{ gap: 0.75, alignItems: 'center', display: 'inline-flex' }}
           >
             <Iconify width={16} icon="eva:external-link-fill" />
-            Get free version
+            Nhận bản miễn phí
           </Link>
         </Stack>
       </m.div>
