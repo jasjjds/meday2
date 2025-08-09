@@ -76,7 +76,7 @@ export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'md
             <SignInButton />
 
             {/** @slot Purchase button */}
-            <Button
+            {/* <Button
               variant="contained"
               rel="noopener"
               target="_blank"
@@ -86,8 +86,8 @@ export function MainLayout({ sx, cssVars, children, slotProps, layoutQuery = 'md
                 [theme.breakpoints.up(layoutQuery)]: { display: 'inline-flex' },
               })}
             >
-              Purchase
-            </Button>
+              Giao dịch
+            </Button> */}
           </Box>
         </>
       ),

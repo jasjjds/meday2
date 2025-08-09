@@ -95,7 +95,7 @@ export function HomeHero({ sx, ...other }) {
             }),
           ]}
         >
-          MEDAY
+          MAYDAY
         </Box>
       </Box>
     </m.div>
@@ -139,7 +139,7 @@ export function HomeHero({ sx, ...other }) {
             />
           ))}
         </AvatarGroup>
-        160+ Happy customers
+        160+ Người dùng hài lòng
       </Box>
     </m.div>
   );
