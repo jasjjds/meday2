@@ -58,6 +58,15 @@ export const endpoints = {
     signIn: '/api/v1/auth/admin/login',
     signUp: '/api/auth/sign-up',
   },
+
+   staff: {
+    create: '/api/v1/admin/staffs',
+    fillter: '/api/v1/admin/staffs',
+    getID: '/api/v1/admin/staffs/{id}',
+    updateId: '/api/v1/admin/staffs/{id}',
+    deleteId: '/api/v1/admin/staffs/{id}',
+  },
+  
   mail: {
     list: '/api/mail/list',
     details: '/api/mail/details',

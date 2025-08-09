@@ -21,7 +21,7 @@ import { Iconify } from 'src/components/iconify';
 import { Scrollbar } from 'src/components/scrollbar';
 import { TableHeadCustom } from 'src/components/table';
 import { CustomPopover } from 'src/components/custom-popover';
-
+import { Add as AddIcon } from "@mui/icons-material";
 // ----------------------------------------------------------------------
 
 export function EmployeeUserList_NewList({ title, subheader, tableData, headCells, sx, ...other }) {
@@ -43,14 +43,33 @@ export function EmployeeUserList_NewList({ title, subheader, tableData, headCell
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', textAlign: 'right' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', textAlign: 'right', gap: 2, padding: 2 }}>
+        
         <Button
-          size="small"
-          color="inherit"
-          href={paths.dashboard.general.CreateEmployeeUser}
-        >
-          Tạo tài khoản mới
-        </Button>
+        size="small"
+        variant="contained" // đổi từ "inherit" sang "contained" cho nổi
+        color="primary"
+        startIcon={<AddIcon />}
+        href={paths.dashboard.general.CreateEmployeeUser}
+        sx={{
+          borderRadius: 2,
+          textTransform: "none",
+          boxShadow: 2,
+          fontWeight: "bold",
+          px: 2,
+          py: 1.5, // tăng chiều cao
+      minHeight: 48, // ép chiều cao tối thiểu
+      
+          transition: "all 0.3s ease",
+          "&:hover": {
+            boxShadow: 4,
+            transform: "scale(1.03)"
+          }
+        }}
+      >
+        Tạo tài khoản mới
+      </Button>
+
         <Button
           size="small"
           color="inherit"

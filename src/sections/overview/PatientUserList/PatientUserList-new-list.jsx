@@ -15,6 +15,7 @@ import Grid from '@mui/material';
 
 import { paths } from 'src/routes/paths';
 import { Iconify } from 'src/components/iconify';
+import AddIcon from "@mui/icons-material/Add";
 import { Scrollbar } from 'src/components/scrollbar';
 import { TableHeadCustom } from 'src/components/table';
 import { CustomPopover } from 'src/components/custom-popover';
@@ -40,14 +41,33 @@ export function PatientUserList_NewList({ title, subheader, tableData, headCells
 
       <Divider sx={{ borderStyle: 'dashed' }} />
 
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', textAlign: 'right' }}>
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', textAlign: 'right', gap: 2, padding: 2 }}>
+        
         <Button
-          size="small"
-          color="inherit"
-          href= {paths.dashboard.general.CreatePatientUser}
-        >
-          Tạo tài khoản mới
-        </Button>
+        size="small"
+        variant="contained" // đổi từ "inherit" sang "contained" cho nổi
+        color="primary"
+        startIcon={<AddIcon />}
+        href={paths.dashboard.general.CreatePatientUser}
+        sx={{
+          borderRadius: 2,
+          textTransform: "none",
+          boxShadow: 2,
+          fontWeight: "bold",
+          px: 2,
+          py: 1.5, // tăng chiều cao
+      minHeight: 48, // ép chiều cao tối thiểu
+      
+          transition: "all 0.3s ease",
+          "&:hover": {
+            boxShadow: 4,
+            transform: "scale(1.03)"
+          }
+        }}
+      >
+        Tạo tài khoản mới
+      </Button>
+
         <Button
           size="small"
           color="inherit"

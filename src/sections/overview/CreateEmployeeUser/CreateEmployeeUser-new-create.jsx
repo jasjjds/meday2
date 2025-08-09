@@ -1,5 +1,6 @@
 'use client';
 
+import axiosInstance, { endpoints } from 'src/lib/axios';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useBoolean } from 'minimal-shared/hooks';
@@ -26,17 +27,17 @@ export function CreateEmployeeUserNewCreate() {
   const methods = useForm({
     mode: 'onChange',
     defaultValues: {
-      Account: '',
-      Password: '',
+      username: '',
+      password: '',
       EmployeeId: '',
-      EmployeeUserName: '',
+      fullname: '',
       PhoneNumber: '',
       Email: '',
       Room: '',
       Status: '',
       Unit: '',
       Faculty: '',
-      Position: '',
+      role: '',
       WorkPosition: ''
     }
   });
@@ -46,8 +47,63 @@ export function CreateEmployeeUserNewCreate() {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
 
+  const onSubmit = handleSubmit(async (form) => {
+  setErrorMessage('');
+  setSuccessMessage('');
 
-  const onSubmit = handleSubmit(async (data) => {
+  try {
+    // Chỉ gửi đúng 4 field backend yêu cầu
+    const payload = {
+      username: String(form.username || '').trim(),
+      fullname: String(form.fullname || '').trim(),
+      password: String(form.password || ''),
+      // đảm bảo role là số 1 hoặc 2
+      role: Number(form.role) === 1 ? 1 : 2,
+    };
+
+    // Guard đơn giản phía client
+    if (!payload.username || !payload.fullname || !payload.password || !Number(form.role)) {
+      setErrorMessage('Vui lòng nhập đủ tên tài khoản, tên đầy đủ, mật khẩu và chọn Chức vụ.');
+      return;
+    }
+
+    // Gọi API (JS thuần, không dùng generic)
+    const res = await axiosInstance.post(endpoints.staff.create, payload);
+    const created = res?.data?.data;
+
+    setSuccessMessage(
+      `Tạo tài khoản thành công 🎉 Username: ${created?.username} (ID: ${created?.id})`
+    );
+    setErrorMessage('');
+
+    // Reset form
+    reset({
+      username: '',
+      password: '',
+      EmployeeId: '',
+      fullname: '',
+      PhoneNumber: '',
+      Email: '',
+      Room: '',
+      Status: '',
+      Unit: '',
+      Faculty: '',
+      role: '',
+      WorkPosition: '',
+    });
+  } catch (err) {
+    const apiMsg =
+      err?.response?.data?.message ||
+      err?.message ||
+      'Đã xảy ra lỗi khi tạo nhân viên';
+    setErrorMessage(apiMsg);
+    setSuccessMessage('');
+    console.error('Create staff failed:', err?.response ?? err);
+  }
+});
+
+
+/*   const onSubmit = handleSubmit(async (data) => {
     try {
       console.log('Submit data:', data);
 
@@ -56,17 +112,17 @@ export function CreateEmployeeUserNewCreate() {
     } catch (error) {
       setErrorMessage(getErrorMessage(error));
     }
-  });
+  }); */
 
   const renderForm = () => (
     <Box sx={{ mt: -3 }}>
       <Grid container spacing={3} direction="column">
         <Grid item xs={12}>
-          <Field.Text name="Account" label="Tài khoản" placeholder="abc@gmail.com" slotProps={{ inputLabel: { shrink: true } }} fullWidth />
+          <Field.Text name="username" label="Tên tài khoản" placeholder="abc" slotProps={{ inputLabel: { shrink: true } }} fullWidth />
         </Grid>
         <Grid item xs={12}>
           <Field.Text
-            name="Password"
+            name="password"
             label="Mật khẩu"
             type={showPassword.value ? 'text' : 'password'}
             slotProps={{
@@ -88,7 +144,7 @@ export function CreateEmployeeUserNewCreate() {
           <Field.Text name="EmployeeId" label="Mã nhân viên" placeholder="2020xxx" slotProps={{ inputLabel: { shrink: true } }} fullWidth />
         </Grid>
         <Grid item xs={12}>
-          <Field.Text name="EmployeeUserName" label="Tên nhân viên" placeholder="Nguyễn Văn A" slotProps={{ inputLabel: { shrink: true } }} fullWidth />
+          <Field.Text name="fullname" label="Tên đầy đủ" placeholder="Nguyễn Văn A" slotProps={{ inputLabel: { shrink: true } }} fullWidth />
         </Grid>
         <Grid item xs={12}>
           <Field.Text name="PhoneNumber" label="Số điện thoại" placeholder="0399xxxxxx" slotProps={{ inputLabel: { shrink: true } }} fullWidth />
@@ -110,7 +166,7 @@ export function CreateEmployeeUserNewCreate() {
         </Grid>
         <Grid item xs={12}>
           <Controller
-            name="Position"
+            name="role"
             control={methods.control}
             defaultValue=""
             render={({ field }) => (
@@ -122,8 +178,8 @@ export function CreateEmployeeUserNewCreate() {
               label="Chức vụ"
             >
               <MenuItem value=""><em>Chọn một</em></MenuItem>
-              <MenuItem value="Bác sĩ">Bác sĩ</MenuItem>
-              <MenuItem value="Y tá">Y tá</MenuItem>
+              <MenuItem value={1}>Bác sĩ</MenuItem>
+              <MenuItem value={2}>Y tá</MenuItem>
             </Select>
           </FormControl>
           )}
