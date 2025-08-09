@@ -7,11 +7,22 @@ import { JWT_STORAGE_KEY } from '../auth/context/jwt/constant';
 
 const axiosInstance = axios.create({ baseURL: CONFIG.apiUrl });
 
+// axiosInstance.interceptors.request.use((config) => {
+//   const token = sessionStorage.getItem(JWT_STORAGE_KEY); // <— dùng sessionStorage
+//   if (token) {
+//     config.headers = config.headers || {};
+//     config.headers.Authorization = `Bearer ${token}`;
+//   }
+//   return config;
+// });
+
 axiosInstance.interceptors.request.use((config) => {
-  const token = sessionStorage.getItem(JWT_STORAGE_KEY); // <— dùng sessionStorage
-  if (token) {
-    config.headers = config.headers || {};
-    config.headers.Authorization = `Bearer ${token}`;
+  if (typeof window !== 'undefined') { // chỉ chạy trên browser
+    const token = sessionStorage.getItem(JWT_STORAGE_KEY);
+    if (token) {
+      config.headers = config.headers || {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
   }
   return config;
 });
