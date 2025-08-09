@@ -29,9 +29,10 @@ export default async function Page({ params }) {
  * NOTE: Remove all "generateStaticParams()" functions if not using static exports.
  */
 export async function generateStaticParams() {
-  const data = CONFIG.isStaticExport ? _tours : _tours.slice(0, 1);
+  // const data = CONFIG.isStaticExport ? _tours : _tours.slice(0, 1);
 
-  return data.map((tour) => ({
-    id: tour.id,
-  }));
+  // return data.map((tour) => ({
+  //   id: tour.id,
+  // }));
+  return[]
 }
