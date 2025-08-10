@@ -113,7 +113,7 @@ export function HomeHero({ sx, ...other }) {
           }),
         ]}
       >
-        {`Công cụ giúo quản lý và chuẩn đoán bệnh mề đay. \n Dễ dàng sử dụng với giao diện thân thiện, \n giúp người dùng theo dõi và quản lý tình trạng bệnh của mình.`}
+        {`Công cụ giúp quản lý và chuẩn đoán bệnh mề đay. \n Dễ dàng sử dụng với giao diện thân thiện, \n giúp người dùng theo dõi và quản lý tình trạng bệnh của mình.`}
       </Typography>
     </m.div>
   );

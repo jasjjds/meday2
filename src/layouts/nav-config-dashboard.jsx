@@ -263,8 +263,8 @@ export const navData = [
         icon: ICONS.parameter,
       },
       {
-        title: 'External link',
-        path: 'https://www.google.com/',
+        title: 'Các thông tin về bệnh may đay',
+        path: 'https://www.bing.com/search?pglt=41&q=urticaria&cvid=59a886af778d41ef8ba4bd62aa268578&gs_lcrp=EgRlZGdlKgYIABBFGDkyBggAEEUYOTIGCAEQABhAMgYIAhAAGEAyBggDEAAYQDIGCAQQABhAMgYIBRAAGEAyBggGEAAYQDIGCAcQABhAMgYICBAAGEAyCAgJEOkHGPxV0gEIMTEyNGowajGoAgiwAgE&FORM=ANNAB1&adppc=EDGEESS&PC=U531',
         icon: ICONS.external,
         info: <Iconify width={18} icon="eva:external-link-fill" />,
       },
