@@ -36,7 +36,7 @@ export function isValidToken(accessToken) {
   try {
     const decoded = jwtDecode(accessToken);
 
-    if (!decoded || !('exp' in decoded)) {
+    if (!decoded || typeof decoded.exp !== 'number') {
       return false;
     }
 
@@ -76,13 +76,15 @@ export async function setSession(accessToken) {
 
       axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`;
 
-      const decodedToken = jwtDecode(accessToken); // ~3 days by minimals server
-
-      if (decodedToken && 'exp' in decodedToken) {
-        tokenExpired(decodedToken.exp);
-      } else {
-        throw new Error('Invalid access token!');
-      }
+      try {
+         const decodedToken = jwtDecode(accessToken);
+          if (decodedToken && typeof decodedToken.exp === 'number') {
+            tokenExpired(decodedToken.exp);
+            }
+          } catch (e) {
+       // Token không decode được cũng không sao — vẫn giữ session.
+            console.warn('Cannot decode token (no exp or non-standard JWT). Skipping auto-expire.');
+          }
     } else {
       sessionStorage.removeItem(JWT_STORAGE_KEY);
       delete axios.defaults.headers.common.Authorization;

@@ -1,86 +1,181 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-
+import { useState, useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
-
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Typography from '@mui/material/Typography';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
+import IconButton from '@mui/material/IconButton';
 
 import { DashboardContent } from 'src/layouts/dashboard';
-import { _EmployeeUser } from 'src/_mock';
-
-
+import axiosInstance, { endpoints } from 'src/lib/axios';
 import { useMockedUser } from 'src/auth/hooks';
-
-import { EmployeeUserList_NewList }  from '../EmployyeeUserList-new-list';
+import { EmployeeUserList_NewList } from '../EmployyeeUserList-new-list';
+import { Iconify } from 'src/components/iconify';
 
 // ----------------------------------------------------------------------
+
 export function EmployeeUserList() {
   const { user } = useMockedUser();
-
   const theme = useTheme();
-  
-  const [searchTerm, setSearchTerm] = useState('');
 
-  const filteredData = useMemo(() => {
-    const term = searchTerm.toLowerCase();
+  const [idInput, setIdInput] = useState('');
+  const [selectedId, setSelectedId] = useState(null);
+  const [page] = useState(1);
+  const [limit] = useState(10);
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState('');
+  const [success, setSuccess] = useState('');     // 👈 thông báo thành công
+  const [tableData, setTableData] = useState([]);
+  const [total, setTotal] = useState(0);
 
-    return _EmployeeUser.filter((p) => {
-      const nameField = String(p.EmployeeName ?? '').toLowerCase();
-      const idField   = String(p.EmployeeUserId   ?? '').toLowerCase();
-      const accField  = String(p.Account         ?? '').toLowerCase();
+  const runSearch = () => {
+    const val = idInput.trim();
+    if (val === '') { setErr(''); setSelectedId(null); return; }
+    if (!/^\d+$/.test(val)) { setErr('ID phải là số'); return; }
+    setErr(''); setSelectedId(Number(val));
+  };
+  const onKeyDown = (e) => { if (e.key === 'Enter') runSearch(); };
 
-      return (
-        nameField.includes(term) ||
-        idField.includes(term) ||
-        accField.includes(term)
-      );
-    });
-  }, [searchTerm]);
-  
+  // 👉 Handler XÓA: gọi API và cập nhật bảng
+  const handleDeleteRow = async (id, fullname) => {
+    const ok = window.confirm(`Bạn chắc chắn muốn xóa nhân viên ${fullname}?`);
+    if (!ok) return;
+
+    setLoading(true);
+    setErr('');
+    setSuccess('');
+    try {
+      const url =
+        (endpoints.staff.deleteId || endpoints.staff.deleteID).replace('{id}', String(id));
+      await axiosInstance.delete(url);               // DELETE /staffs/{id}
+
+      // cập nhật UI
+      setTableData((prev) => prev.filter((r) => r.id !== id));
+      setTotal((prev) => Math.max(0, prev - 1));
+      if (selectedId === id) setSelectedId(null);
+
+      setSuccess(`Đã xóa nhân viên ID ${name} thành công ✅`);
+    } catch (e) {
+      setErr(e?.response?.data?.message || e.message || 'Xóa nhân viên thất bại');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    let ignore = false;
+    async function load() {
+      setLoading(true);
+      setErr((prev) => (prev === 'ID phải là số' ? prev : ''));
+      setSuccess('');
+      try {
+        if (selectedId !== null) {
+          const url = endpoints.staff.getID.replace('{id}', String(selectedId));
+          const res = await axiosInstance.get(url);
+          const s = (res && res.data && (res.data.data ?? res.data)) || null;
+
+          const minimal = s
+            ? [{
+                id: s.id,
+                username: s.username,
+                fullname: s.fullname,
+                role: s.role === 1 ? 'Bác sĩ' : s.role === 2 ? 'Y tá' : '-',
+                createdAt: s.createdAt,
+              }]
+            : [];
+          if (!ignore) { setTableData(minimal); setTotal(minimal.length); }
+        } else {
+          const res = await axiosInstance.get(endpoints.staff.fillter, { params: { page, limit } });
+          const list = Array.isArray(res?.data?.data) ? res.data.data : [];
+          const minimal = list.map((s) => ({
+            id: s.id,
+            username: s.username,
+            fullname: s.fullname,
+            role: s.role === 1 ? 'Bác sĩ' : s.role === 2 ? 'Y tá' : '-',
+            createdAt: s.createdAt,
+          })).sort((a, b) => Number(a.id) - Number(b.id));
+
+          if (!ignore) { setTableData(minimal); setTotal(res?.data?.total ?? minimal.length); }
+        }
+      } catch (e) {
+        if (!ignore) {
+          if (e?.response?.status === 404 && selectedId !== null) {
+            setTableData([]); setTotal(0);
+            setErr(`Không tìm thấy nhân viên với ID ${selectedId}`);
+          } else {
+            setErr(e?.response?.data?.message || e.message || 'Load staff failed');
+          }
+        }
+      } finally {
+        if (!ignore) setLoading(false);
+      }
+    }
+    load();
+    return () => { ignore = true; };
+  }, [page, limit, selectedId]);
+
   return (
     <DashboardContent maxWidth="xl">
-      <Grid container spacing={3}>
-        <Grid item xs={12} md={6}>
-            <Typography variant="h5">Danh sách bệnh nhân</Typography>
+      <Grid container spacing={2} direction="column">
+        <Grid item>
+          <Typography variant="h5">Danh sách nhân viên</Typography>
         </Grid>
-        <Grid size={{ xs: 12, lg: 12 }}>
+
+        <Grid item>
           <TextField
             fullWidth
-            label="Tìm kiếm"
-            placeholder="Nhập..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            label="Tìm theo ID"
+            placeholder="Nhập ID, ví dụ 12"
+            value={idInput}
+            onChange={(e) => setIdInput(e.target.value)}
+            onKeyDown={onKeyDown}
             InputProps={{
-              startAdornment: (
-            <InputAdornment position="start">
-            </InputAdornment>
-                ),
-              }}
-            />
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton onClick={runSearch} edge="end" aria-label="search-by-id">
+                    <Iconify icon="solar:magnifer-bold" />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
+          />
         </Grid>
-        <Grid size={{ xs: 12, lg: 12 }}>
+
+        {loading && (
+          <Grid item>
+            <CircularProgress size={24} />
+          </Grid>
+        )}
+
+        {err && (
+          <Grid item>
+            <Alert severity="error" sx={{ mb: 2 }}>{err}</Alert>
+          </Grid>
+        )}
+
+        {success && (
+          <Grid item>
+            <Alert severity="success" sx={{ mb: 2 }}>{success}</Alert>
+          </Grid>
+        )}
+
+        <Grid item>
           <EmployeeUserList_NewList
-            tableData={filteredData}
+            title={`Danh sách nhân viên (Tổng: ${total})`}
+            tableData={tableData}
             headCells={[
-              { id: 'Id', label: 'ID người dùng' },
-              { id: 'EmployeeUserId', label: 'Mã nhân viên' },
-              { id: 'Name', label: 'Tên nhân viên' },
-              { id: 'Account', label: 'Tài khoản' },
-              { id: 'Password', label: 'Mật khẩu' },
-              { id: 'PhoneNumber', label: 'Số điện thoại' },
-              { id: 'Email', label: 'Email' },
-              { id: 'Room', label: 'Phòng' },
-              { id: 'Status', label: 'Trạng thái nhân viên' },
-              { id: 'Unit', label: 'Đơn vị trực thuộc' },
-              { id: 'Faculty', label: 'Khoa/ viện' },
-              { id: 'Position', label: 'Chức vụ' },
-              { id: 'WorkPosition', label: 'Vị trí công tác' },
+              { id: 'id', label: 'ID' },
+              { id: 'username', label: 'Tài khoản' },
+              { id: 'fullname', label: 'Họ & Tên' },
+              { id: 'role', label: 'Chức vụ' },
+              { id: 'createdAt', label: 'Ngày tạo' },
               { id: '', label: '' },
             ]}
+            onDeleteRow={handleDeleteRow}
           />
         </Grid>
       </Grid>

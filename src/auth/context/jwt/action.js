@@ -11,6 +11,11 @@ import { JWT_STORAGE_KEY } from './constant';
 
 // ----------------------------------------------------------------------
 
+const AUTH_ROLE_KEY = 'AUTH_ROLE';
+const AUTH_USER_KEY = 'AUTH_USER';
+
+// ----------------------------------------------------------------------
+
 export const signInWithPassword = async ({ username, password }) => {
   const res = await axios.post(endpoints.auth.signIn, { username, password });
 
@@ -26,6 +31,34 @@ export const signInWithPassword = async ({ username, password }) => {
   }
 
   await setSession(accessToken);
+  sessionStorage.setItem(AUTH_ROLE_KEY, 'admin');
+  return true;
+};
+
+/** **************************************
+ * Sign up
+ *************************************** */
+
+export const signInStaffWithPassword = async ({ username, password }) => {
+  const res = await axios.post(endpoints.staff.signIn, { username, password });
+  const accessToken =
+    res?.data?.data?.accessToken ??
+    res?.data?.accessToken ??
+    res?.data?.token ??
+    res?.data?.access_token ?? null;
+
+  if (!accessToken) throw new Error('Access token not found in response');
+
+  await setSession(accessToken);
+
+  sessionStorage.setItem(AUTH_ROLE_KEY, 'staff');
+
+  try {
+    const meRes = await axios.get(endpoints.staff.me);
+    sessionStorage.setItem(AUTH_USER_KEY, JSON.stringify(meRes?.data?.data ?? null));
+  } catch {
+  }
+
   return true;
 };
 
