@@ -46,8 +46,8 @@ export function JwtSignInView() {
   const [loginAsStaff, setLoginAsStaff] = useState(true);
 
   const defaultValues = {
-    username: 'supper_admin',
-    password: 'password',
+    username: '',
+    password: '',
   };
 
   const methods = useForm({
